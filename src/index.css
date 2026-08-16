@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #09090B;
+    color: #E4E4E7;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  ::selection {
+    background-color: #4F46E5;
+    color: #FFFFFF;
+  }
+}
+
+/* Custom scrollbars for the Elegant Dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09090B;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272A;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3F3F46;
+}

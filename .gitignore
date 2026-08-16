@@ -1,0 +1,14 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+apispec.json
+apispec.md
+functionspec.json
+functionspec.md
+metadata.json
+metadata.md

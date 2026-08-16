@@ -1,0 +1,843 @@
+{
+  "environments": [
+    {
+      "id": "env_dev",
+      "name": "Development",
+      "code": "development",
+      "color": "emerald",
+      "description": "Local and internal developer workstations",
+      "isLocked": false,
+      "cloudSyncEnabled": true,
+      "lastSyncedAt": "2026-08-15T23:00:00.000Z"
+    },
+    {
+      "id": "env_staging",
+      "name": "Staging",
+      "code": "staging",
+      "color": "amber",
+      "description": "Pre-release staging cluster mirroring production infrastructure",
+      "isLocked": false,
+      "cloudSyncEnabled": true,
+      "lastSyncedAt": "2026-08-15T22:30:00.000Z"
+    },
+    {
+      "id": "env_qa",
+      "name": "QA & Testing",
+      "code": "qa",
+      "color": "purple",
+      "description": "Automated integration testing and QA verification sandbox",
+      "isLocked": false,
+      "cloudSyncEnabled": true,
+      "lastSyncedAt": "2026-08-15T21:00:00.000Z"
+    },
+    {
+      "id": "env_prod",
+      "name": "Production",
+      "code": "production",
+      "color": "rose",
+      "description": "Live mission-critical customer-facing cluster with protected secrets",
+      "isLocked": true,
+      "cloudSyncEnabled": true,
+      "lastSyncedAt": "2026-08-15T23:10:00.000Z"
+    },
+    {
+      "id": "env_preview",
+      "name": "Preview PR",
+      "code": "preview",
+      "color": "blue",
+      "description": "Ephemeral pull request preview environments",
+      "isLocked": false,
+      "cloudSyncEnabled": false,
+      "lastSyncedAt": "2026-08-15T18:00:00.000Z"
+    }
+  ],
+  "apps": [
+    {
+      "id": "app_core_api",
+      "name": "Core API Gateway",
+      "slug": "core-api",
+      "description": "Backend REST & GraphQL microservices, database connectors, and business logic",
+      "icon": "Server",
+      "color": "indigo"
+    },
+    {
+      "id": "app_web_frontend",
+      "name": "Web Frontend",
+      "slug": "web-frontend",
+      "description": "Customer portal, Next.js UI, SSR endpoints, and client telemetry",
+      "icon": "Globe",
+      "color": "cyan"
+    },
+    {
+      "id": "app_auth_service",
+      "name": "Auth & Identity",
+      "slug": "auth-service",
+      "description": "OAuth2 provider, JWT token generator, and user session verification",
+      "icon": "Shield",
+      "color": "purple"
+    },
+    {
+      "id": "app_billing_service",
+      "name": "Payments & Billing",
+      "slug": "billing-service",
+      "description": "Stripe integration, invoice webhooks, and subscription lifecycle",
+      "icon": "CreditCard",
+      "color": "emerald"
+    },
+    {
+      "id": "app_worker_queue",
+      "name": "Background Worker",
+      "slug": "worker-queue",
+      "description": "BullMQ redis job queue, asynchronous workers, and cron scheduler",
+      "icon": "Cpu",
+      "color": "amber"
+    }
+  ],
+  "variablesByEnv": {
+    "env_dev": [
+      {
+        "id": "var_dev_1",
+        "appId": "app_core_api",
+        "key": "DATABASE_URL",
+        "value": "postgresql://postgres:devpassword@localhost:5432/cloud_dev_db",
+        "isSecret": true,
+        "category": "Database",
+        "description": "Local PostgreSQL connection string with docker container credentials",
+        "updatedAt": "2026-08-15T21:00:00.000Z",
+        "updatedBy": "anshuman.singh@dev.local",
+        "currentVersion": 3,
+        "history": [
+          {
+            "id": "hist_1_1",
+            "version": 1,
+            "value": "postgresql://root:@localhost:5432/app",
+            "isSecret": true,
+            "timestamp": "2026-08-13T23:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Initial local database setup"
+          },
+          {
+            "id": "hist_1_2",
+            "version": 2,
+            "value": "postgresql://postgres:postgres@127.0.0.1:5432/cloud_dev_db",
+            "isSecret": true,
+            "timestamp": "2026-08-14T23:00:00.000Z",
+            "author": "alex.chen@team.org",
+            "changeType": "update_value",
+            "reason": "Switched to docker-compose postgres credentials",
+            "previousValue": "postgresql://root:@localhost:5432/app"
+          },
+          {
+            "id": "hist_1_3",
+            "version": 3,
+            "value": "postgresql://postgres:devpassword@localhost:5432/cloud_dev_db",
+            "isSecret": true,
+            "timestamp": "2026-08-15T21:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "update_value",
+            "reason": "Configured custom secure local password",
+            "previousValue": "postgresql://postgres:postgres@127.0.0.1:5432/cloud_dev_db"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_2",
+        "appId": "app_auth_service",
+        "key": "JWT_SECRET",
+        "value": "dev_super_secret_jwt_signing_key_32_bytes_long_random",
+        "isSecret": true,
+        "category": "Auth & Security",
+        "description": "HMAC-SHA256 token signature key for session validation",
+        "updatedAt": "2026-08-15T11:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 2,
+        "history": [
+          {
+            "id": "hist_2_1",
+            "version": 1,
+            "value": "dev_secret_123",
+            "isSecret": false,
+            "timestamp": "2026-08-12T23:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Quick placeholder secret for auth middleware tests"
+          },
+          {
+            "id": "hist_2_2",
+            "version": 2,
+            "value": "dev_super_secret_jwt_signing_key_32_bytes_long_random",
+            "isSecret": true,
+            "timestamp": "2026-08-15T11:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "update_value",
+            "reason": "Upgraded entropy to 256-bit secure format and enabled secret masking",
+            "previousValue": "dev_secret_123"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_3",
+        "appId": "app_web_frontend",
+        "key": "NEXT_PUBLIC_API_URL",
+        "value": "http://localhost:3000/api",
+        "isSecret": false,
+        "category": "Network",
+        "description": "Frontend client endpoint target for gateway routes",
+        "updatedAt": "2026-08-14T17:00:00.000Z",
+        "updatedBy": "anshuman.singh@dev.local",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_3_1",
+            "version": 1,
+            "value": "http://localhost:3000/api",
+            "isSecret": false,
+            "timestamp": "2026-08-14T17:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Local gateway endpoint declaration"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_4",
+        "appId": "app_billing_service",
+        "key": "STRIPE_SECRET_KEY",
+        "value": "sk_test_51MzDevSampleKeyMockedStripeToken99281",
+        "isSecret": true,
+        "category": "Payments",
+        "description": "Stripe Sandbox API key for test checkouts",
+        "updatedAt": "2026-08-15T20:00:00.000Z",
+        "updatedBy": "finops.bot@stripe.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_4_1",
+            "version": 1,
+            "value": "sk_test_51MzDevSampleKeyMockedStripeToken99281",
+            "isSecret": true,
+            "timestamp": "2026-08-15T20:00:00.000Z",
+            "author": "finops.bot@stripe.com",
+            "changeType": "create",
+            "reason": "Provisioned developer sandbox credentials"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_5",
+        "appId": "app_worker_queue",
+        "key": "REDIS_CACHE_URL",
+        "value": "redis://default:local_redis_dev@127.0.0.1:6379",
+        "isSecret": true,
+        "category": "Database",
+        "description": "In-memory caching and bullmq task queue server",
+        "updatedAt": "2026-08-15T21:30:00.000Z",
+        "updatedBy": "alex.chen@team.org",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_5_1",
+            "version": 1,
+            "value": "redis://default:local_redis_dev@127.0.0.1:6379",
+            "isSecret": true,
+            "timestamp": "2026-08-15T21:30:00.000Z",
+            "author": "alex.chen@team.org",
+            "changeType": "create",
+            "reason": "Configured local cache cluster"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_6",
+        "appId": "app_core_api",
+        "key": "LOG_LEVEL",
+        "value": "debug",
+        "isSecret": false,
+        "category": "Observability",
+        "description": "Verbose console output for local debugging",
+        "updatedAt": "2026-08-15T14:40:00.000Z",
+        "updatedBy": "anshuman.singh@dev.local",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_6_1",
+            "version": 1,
+            "value": "debug",
+            "isSecret": false,
+            "timestamp": "2026-08-15T14:40:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Set debug logging for development"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_7",
+        "appId": "app_web_frontend",
+        "key": "NEXT_PUBLIC_APP_TITLE",
+        "value": "CloudEnv Platform (Dev)",
+        "isSecret": false,
+        "category": "General",
+        "description": "Frontend branding header for development mode",
+        "updatedAt": "2026-08-15T13:00:00.000Z",
+        "updatedBy": "anshuman.singh@dev.local",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_7_1",
+            "version": 1,
+            "value": "CloudEnv Platform (Dev)",
+            "isSecret": false,
+            "timestamp": "2026-08-15T13:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Initial dev title set"
+          }
+        ]
+      },
+      {
+        "id": "var_dev_8",
+        "appId": "app_auth_service",
+        "key": "SESSION_EXPIRY_HOURS",
+        "value": "72",
+        "isSecret": false,
+        "category": "Auth & Security",
+        "description": "Longer session lifetime for local developer convenience",
+        "updatedAt": "2026-08-15T18:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_8_1",
+            "version": 1,
+            "value": "72",
+            "isSecret": false,
+            "timestamp": "2026-08-15T18:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "create",
+            "reason": "Configured local session longevity"
+          }
+        ]
+      }
+    ],
+    "env_staging": [
+      {
+        "id": "var_stg_1",
+        "appId": "app_core_api",
+        "key": "DATABASE_URL",
+        "value": "postgresql://stg_app_user:V9k$8mQ!staging@db-staging.internal.net:5432/staging_core",
+        "isSecret": true,
+        "category": "Database",
+        "description": "Managed AWS RDS Aurora PostgreSQL Staging Cluster",
+        "updatedAt": "2026-08-15T21:00:00.000Z",
+        "updatedBy": "devops.ci@pipeline.com",
+        "currentVersion": 2,
+        "history": [
+          {
+            "id": "hist_stg_1_1",
+            "version": 1,
+            "value": "postgresql://stg_user:old_pass@staging.db:5432/staging",
+            "isSecret": true,
+            "timestamp": "2026-08-11T23:00:00.000Z",
+            "author": "alex.chen@team.org",
+            "changeType": "create",
+            "reason": "Initial staging RDS link"
+          },
+          {
+            "id": "hist_stg_1_2",
+            "version": 2,
+            "value": "postgresql://stg_app_user:V9k$8mQ!staging@db-staging.internal.net:5432/staging_core",
+            "isSecret": true,
+            "timestamp": "2026-08-15T21:00:00.000Z",
+            "author": "devops.ci@pipeline.com",
+            "changeType": "update_value",
+            "reason": "Migrated to isolated internal subnet VPC endpoint",
+            "previousValue": "postgresql://stg_user:old_pass@staging.db:5432/staging"
+          }
+        ]
+      },
+      {
+        "id": "var_stg_2",
+        "appId": "app_auth_service",
+        "key": "JWT_SECRET",
+        "value": "stg_84b7a1c9e3d2f5a6b0c4e8d1f7a3b9c2e5d8f1a4b7c0d3e6f9a2b5c8d1e4",
+        "isSecret": true,
+        "category": "Auth & Security",
+        "description": "Staging environment token signature key",
+        "updatedAt": "2026-08-14T07:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_stg_2_1",
+            "version": 1,
+            "value": "stg_84b7a1c9e3d2f5a6b0c4e8d1f7a3b9c2e5d8f1a4b7c0d3e6f9a2b5c8d1e4",
+            "isSecret": true,
+            "timestamp": "2026-08-14T07:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "create",
+            "reason": "Rotated staging HMAC key before sprint QA"
+          }
+        ]
+      },
+      {
+        "id": "var_stg_3",
+        "appId": "app_web_frontend",
+        "key": "NEXT_PUBLIC_API_URL",
+        "value": "https://staging-api.cloudenv.internal/v1",
+        "isSecret": false,
+        "category": "Network",
+        "description": "Staging API load balancer URI",
+        "updatedAt": "2026-08-13T11:00:00.000Z",
+        "updatedBy": "alex.chen@team.org",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_stg_3_1",
+            "version": 1,
+            "value": "https://staging-api.cloudenv.internal/v1",
+            "isSecret": false,
+            "timestamp": "2026-08-13T11:00:00.000Z",
+            "author": "alex.chen@team.org",
+            "changeType": "create",
+            "reason": "Pointed to Staging ingress"
+          }
+        ]
+      },
+      {
+        "id": "var_stg_4",
+        "appId": "app_billing_service",
+        "key": "STRIPE_SECRET_KEY",
+        "value": "sk_test_51StagingStripeKey_SafeMockPaymentsTest_2026",
+        "isSecret": true,
+        "category": "Payments",
+        "description": "Staging Stripe Sandbox Secret",
+        "updatedAt": "2026-08-15T03:00:00.000Z",
+        "updatedBy": "finops.bot@stripe.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_stg_4_1",
+            "version": 1,
+            "value": "sk_test_51StagingStripeKey_SafeMockPaymentsTest_2026",
+            "isSecret": true,
+            "timestamp": "2026-08-15T03:00:00.000Z",
+            "author": "finops.bot@stripe.com",
+            "changeType": "create",
+            "reason": "Staging webhook test key"
+          }
+        ]
+      },
+      {
+        "id": "var_stg_5",
+        "appId": "app_core_api",
+        "key": "LOG_LEVEL",
+        "value": "info",
+        "isSecret": false,
+        "category": "Observability",
+        "description": "Standard informational log output",
+        "updatedAt": "2026-08-12T15:00:00.000Z",
+        "updatedBy": "anshuman.singh@dev.local",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_stg_5_1",
+            "version": 1,
+            "value": "info",
+            "isSecret": false,
+            "timestamp": "2026-08-12T15:00:00.000Z",
+            "author": "anshuman.singh@dev.local",
+            "changeType": "create",
+            "reason": "Configured staging log levels"
+          }
+        ]
+      }
+    ],
+    "env_qa": [
+      {
+        "id": "var_qa_1",
+        "appId": "app_core_api",
+        "key": "DATABASE_URL",
+        "value": "postgresql://qa_tester:qa_pass_mock_99@qa-db.test.cloud:5432/qa_isolated",
+        "isSecret": true,
+        "category": "Database",
+        "description": "Temporary seeded test database wiped nightly",
+        "updatedAt": "2026-08-15T19:40:00.000Z",
+        "updatedBy": "ci.runner@github-actions.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_qa_1",
+            "version": 1,
+            "value": "postgresql://qa_tester:qa_pass_mock_99@qa-db.test.cloud:5432/qa_isolated",
+            "isSecret": true,
+            "timestamp": "2026-08-15T19:40:00.000Z",
+            "author": "ci.runner@github-actions.com",
+            "changeType": "create",
+            "reason": "Created automated integration DB endpoint"
+          }
+        ]
+      },
+      {
+        "id": "var_qa_2",
+        "appId": "app_auth_service",
+        "key": "JWT_SECRET",
+        "value": "qa_static_test_signing_key_for_e2e_cypress_suites_2026",
+        "isSecret": true,
+        "category": "Auth & Security",
+        "description": "Fixed key for deterministic auth fixtures in E2E tests",
+        "updatedAt": "2026-08-15T18:00:00.000Z",
+        "updatedBy": "qa.lead@enterprise.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_qa_2",
+            "version": 1,
+            "value": "qa_static_test_signing_key_for_e2e_cypress_suites_2026",
+            "isSecret": true,
+            "timestamp": "2026-08-15T18:00:00.000Z",
+            "author": "qa.lead@enterprise.com",
+            "changeType": "create",
+            "reason": "Fixed token signature for Playwright / Cypress"
+          }
+        ]
+      }
+    ],
+    "env_prod": [
+      {
+        "id": "var_prod_1",
+        "appId": "app_core_api",
+        "key": "DATABASE_URL",
+        "value": "postgresql://prod_app_cluster:p9Z$wL8#K1vQ@aurora-prod-primary.cr7xyz.us-east-1.rds.amazonaws.com:5432/production_core?sslmode=verify-full",
+        "isSecret": true,
+        "category": "Database",
+        "description": "Multi-AZ AWS Aurora High-Availability PostgreSQL Primary Cluster",
+        "updatedAt": "2026-08-15T18:10:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 4,
+        "history": [
+          {
+            "id": "hist_prod_1_1",
+            "version": 1,
+            "value": "postgresql://prod_user:legacy_pass@aurora-prod.rds:5432/prod",
+            "isSecret": true,
+            "timestamp": "2026-07-16T23:00:00.000Z",
+            "author": "lead.architect@org.com",
+            "changeType": "create",
+            "reason": "Production cluster v1 deployment"
+          },
+          {
+            "id": "hist_prod_1_2",
+            "version": 2,
+            "value": "postgresql://prod_app_cluster:old_v2_p9ZwL8#K1vQ@aurora-prod.rds:5432/production_core",
+            "isSecret": true,
+            "timestamp": "2026-08-01T23:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "update_value",
+            "reason": "Rotated credentials per quarterly compliance mandate",
+            "previousValue": "postgresql://prod_user:legacy_pass@aurora-prod.rds:5432/prod"
+          },
+          {
+            "id": "hist_prod_1_3",
+            "version": 3,
+            "value": "postgresql://prod_app_cluster:p9Z$wL8#K1vQ@aurora-prod-primary.cr7xyz.us-east-1.rds.amazonaws.com:5432/production_core",
+            "isSecret": true,
+            "timestamp": "2026-08-12T23:00:00.000Z",
+            "author": "devops.lead@cloud.org",
+            "changeType": "update_value",
+            "reason": "Switched host to Multi-AZ dedicated reader/writer endpoint",
+            "previousValue": "postgresql://prod_app_cluster:old_v2_p9ZwL8#K1vQ@aurora-prod.rds:5432/production_core"
+          },
+          {
+            "id": "hist_prod_1_4",
+            "version": 4,
+            "value": "postgresql://prod_app_cluster:p9Z$wL8#K1vQ@aurora-prod-primary.cr7xyz.us-east-1.rds.amazonaws.com:5432/production_core?sslmode=verify-full",
+            "isSecret": true,
+            "timestamp": "2026-08-15T18:10:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "update_value",
+            "reason": "Enforced strict TLS SSLMode=verify-full with AWS Root CA",
+            "previousValue": "postgresql://prod_app_cluster:p9Z$wL8#K1vQ@aurora-prod-primary.cr7xyz.us-east-1.rds.amazonaws.com:5432/production_core"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_2",
+        "appId": "app_auth_service",
+        "key": "JWT_SECRET",
+        "value": "prod_9f82a7c4e1b0d5f3a6c8e2b9d7f4a1c5e8b2d6f0a3c7e9b1d4f8a2c6e0b4d7f",
+        "isSecret": true,
+        "category": "Auth & Security",
+        "description": "512-bit cryptographically secure key stored in Hardware Security Module",
+        "updatedAt": "2026-08-08T23:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 2,
+        "history": [
+          {
+            "id": "hist_prod_2_1",
+            "version": 1,
+            "value": "prod_legacy_key_v1_random_entropy_771892",
+            "isSecret": true,
+            "timestamp": "2026-06-16T23:00:00.000Z",
+            "author": "lead.architect@org.com",
+            "changeType": "create",
+            "reason": "Initial production authorization token secret"
+          },
+          {
+            "id": "hist_prod_2_2",
+            "version": 2,
+            "value": "prod_9f82a7c4e1b0d5f3a6c8e2b9d7f4a1c5e8b2d6f0a3c7e9b1d4f8a2c6e0b4d7f",
+            "isSecret": true,
+            "timestamp": "2026-08-08T23:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "update_value",
+            "reason": "Upgraded to 512-bit key length via AWS KMS rotation hook",
+            "previousValue": "prod_legacy_key_v1_random_entropy_771892"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_3",
+        "appId": "app_web_frontend",
+        "key": "NEXT_PUBLIC_API_URL",
+        "value": "https://api.cloudenv.com/v1",
+        "isSecret": false,
+        "category": "Network",
+        "description": "Global Cloudflare edge CDN API gateway",
+        "updatedAt": "2026-07-26T23:00:00.000Z",
+        "updatedBy": "lead.architect@org.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_prod_3_1",
+            "version": 1,
+            "value": "https://api.cloudenv.com/v1",
+            "isSecret": false,
+            "timestamp": "2026-07-26T23:00:00.000Z",
+            "author": "lead.architect@org.com",
+            "changeType": "create",
+            "reason": "Production Cloudflare DNS routing"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_4",
+        "appId": "app_billing_service",
+        "key": "STRIPE_SECRET_KEY",
+        "value": "sk_live_51N0ProductionLiveStripeSecretKey_CR99824",
+        "isSecret": true,
+        "category": "Payments",
+        "description": "Live Stripe account payment processing secret",
+        "updatedAt": "2026-08-13T23:00:00.000Z",
+        "updatedBy": "finops.bot@stripe.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_prod_4_1",
+            "version": 1,
+            "value": "sk_live_51N0ProductionLiveStripeSecretKey_CR99824",
+            "isSecret": true,
+            "timestamp": "2026-08-13T23:00:00.000Z",
+            "author": "finops.bot@stripe.com",
+            "changeType": "create",
+            "reason": "Connected live Stripe billing account"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_5",
+        "appId": "app_worker_queue",
+        "key": "REDIS_CACHE_URL",
+        "value": "rediss://:prod_redis_pAss9981@clustercfg.prod-cache.cache.amazonaws.com:6379",
+        "isSecret": true,
+        "category": "Database",
+        "description": "AWS ElastiCache Redis replication group with in-transit encryption",
+        "updatedAt": "2026-08-12T23:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 2,
+        "history": [
+          {
+            "id": "hist_prod_5_1",
+            "version": 1,
+            "value": "redis://prod-cache.internal:6379",
+            "isSecret": true,
+            "timestamp": "2026-08-10T23:00:00.000Z",
+            "author": "lead.architect@org.com",
+            "changeType": "create",
+            "reason": "Initial ElastiCache cluster setup"
+          },
+          {
+            "id": "hist_prod_5_2",
+            "version": 2,
+            "value": "rediss://:prod_redis_pAss9981@clustercfg.prod-cache.cache.amazonaws.com:6379",
+            "isSecret": true,
+            "timestamp": "2026-08-12T23:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "update_value",
+            "reason": "Enabled rediss:// protocol and SSL in-transit encryption",
+            "previousValue": "redis://prod-cache.internal:6379"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_6",
+        "appId": "app_core_api",
+        "key": "LOG_LEVEL",
+        "value": "error",
+        "isSecret": false,
+        "category": "Observability",
+        "description": "Strict error-only logging to reduce Datadog ingest volume",
+        "updatedAt": "2026-08-09T17:00:00.000Z",
+        "updatedBy": "lead.architect@org.com",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_prod_6_1",
+            "version": 1,
+            "value": "error",
+            "isSecret": false,
+            "timestamp": "2026-08-09T17:00:00.000Z",
+            "author": "lead.architect@org.com",
+            "changeType": "create",
+            "reason": "Set production error-level ingest filter"
+          }
+        ]
+      },
+      {
+        "id": "var_prod_7",
+        "appId": "app_auth_service",
+        "key": "SESSION_EXPIRY_HOURS",
+        "value": "12",
+        "isSecret": false,
+        "category": "Auth & Security",
+        "description": "Strict production token TTL for compliance",
+        "updatedAt": "2026-08-12T15:00:00.000Z",
+        "updatedBy": "sarah.connor@sec.io",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_prod_7_1",
+            "version": 1,
+            "value": "12",
+            "isSecret": false,
+            "timestamp": "2026-08-12T15:00:00.000Z",
+            "author": "sarah.connor@sec.io",
+            "changeType": "create",
+            "reason": "Enforced SOC2 session timeout limits"
+          }
+        ]
+      }
+    ],
+    "env_preview": [
+      {
+        "id": "var_pr_1",
+        "appId": "app_core_api",
+        "key": "DATABASE_URL",
+        "value": "postgresql://pr_bot:ephemeral_pass@branch-pr-42.db.cloud:5432/ephemeral_db",
+        "isSecret": true,
+        "category": "Database",
+        "description": "Ephemeral Neon/Supabase serverless branch created for PR #42",
+        "updatedAt": "2026-08-15T17:00:00.000Z",
+        "updatedBy": "github-actions[bot]",
+        "currentVersion": 1,
+        "history": [
+          {
+            "id": "hist_pr_1",
+            "version": 1,
+            "value": "postgresql://pr_bot:ephemeral_pass@branch-pr-42.db.cloud:5432/ephemeral_db",
+            "isSecret": true,
+            "timestamp": "2026-08-15T17:00:00.000Z",
+            "author": "github-actions[bot]",
+            "changeType": "git_sync",
+            "reason": "Spawned automatically on pull_request opened event"
+          }
+        ]
+      }
+    ]
+  },
+  "gitConfig": {
+    "provider": "github",
+    "connected": true,
+    "accountName": "anshuman-singh",
+    "repoOwner": "enterprise-org",
+    "repoName": "cloud-core-platform",
+    "branch": "main",
+    "token": "ghp_mock982181726354182736451829304192837",
+    "syncTarget": "repo_env",
+    "autoSyncOnCommit": false,
+    "lastSyncStatus": "success",
+    "lastSyncMessage": "Synchronized variables to branch \"main\" (.env.production)",
+    "lastSyncTime": "2026-08-15T22:35:00.000Z",
+    "lastCommitSha": "c8f419b"
+  },
+  "gitSyncLogs": [
+    {
+      "id": "log_1",
+      "timestamp": "2026-08-15T22:35:00.000Z",
+      "provider": "github",
+      "repo": "enterprise-org/cloud-core-platform",
+      "branch": "main",
+      "environment": "Production",
+      "action": "push",
+      "status": "success",
+      "variablesCount": 7,
+      "commitSha": "c8f419b",
+      "message": "Update production environment configs [skip ci]",
+      "author": "anshuman.singh@dev.local"
+    },
+    {
+      "id": "log_2",
+      "timestamp": "2026-08-15T20:10:00.000Z",
+      "provider": "github",
+      "repo": "enterprise-org/cloud-core-platform",
+      "branch": "staging",
+      "environment": "Staging",
+      "action": "push",
+      "status": "success",
+      "variablesCount": 5,
+      "commitSha": "a12e99d",
+      "message": "Sync Staging DB credentials after RDS migration",
+      "author": "alex.chen@team.org"
+    },
+    {
+      "id": "log_3",
+      "timestamp": "2026-08-15T17:00:00.000Z",
+      "provider": "bitbucket",
+      "repo": "acme-corp/service-pipeline",
+      "branch": "release/v2.4",
+      "environment": "Development",
+      "action": "webhook_sync",
+      "status": "success",
+      "variablesCount": 8,
+      "commitSha": "b441f02",
+      "message": "Automated Bitbucket Deployment Variables sync",
+      "author": "Bitbucket Pipelines Bot"
+    }
+  ],
+  "cloudSnapshots": [
+    {
+      "id": "snap_baseline_q3",
+      "label": "Q3 Cluster Baseline & Microservice Architecture",
+      "timestamp": "2026-08-15T12:00:00.000Z",
+      "author": "lead.architect@org.com",
+      "environmentCount": 5,
+      "variableCount": 23,
+      "data": {
+        "environments": [
+          { "id": "env_dev", "name": "Development", "code": "development", "color": "emerald", "isLocked": false },
+          { "id": "env_staging", "name": "Staging", "code": "staging", "color": "amber", "isLocked": false },
+          { "id": "env_qa", "name": "QA & Testing", "code": "qa", "color": "purple", "isLocked": false },
+          { "id": "env_prod", "name": "Production", "code": "production", "color": "rose", "isLocked": true },
+          { "id": "env_preview", "name": "Preview PR", "code": "preview", "color": "blue", "isLocked": false }
+        ]
+      }
+    }
+  ],
+  "stackPresets": [
+    "Next.js + Prisma",
+    "Django + Redis + Celery",
+    "Go Microservice + Kafka",
+    "Stripe + Supabase Auth"
+  ]
+}
