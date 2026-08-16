@@ -1,0 +1,128 @@
+name: Auto-PR feature -> playtest and merge
+on:
+  push:
+    branches:
+      - "feature-**"
+jobs:
+  pr_merge:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-bullseye
+    defaults:
+      run:
+        shell: bash
+    env:
+      # Change if your instance URL differs
+      GITEA_BASE_URL: ${{ vars.GIT_INTERNAL_BASE }}
+      PLAYTEST_BRANCH: playtest
+
+      # Provide this as a Gitea Actions secret in the repo (Settings -> Actions -> Secrets)
+      # Must have rights to create PRs, merge PRs, and delete branches.
+      GITEA_TOKEN: ${{ vars.GIT_TOKEN }}
+
+      # Repo + branch from the event context (GitHub-compatible in Gitea Actions)
+      REPO: ${{ github.repository }}     # "owner/name"
+      BRANCH: ${{ github.ref_name }}      # e.g. "feature/issue-123"
+    steps:
+      - name: Install prerequisites (rsync, jq, git)
+        run: |
+          set -eu
+          export DEBIAN_FRONTEND=noninteractive
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update -y
+            apt-get install -y rsync jq git ca-certificates curl
+          elif command -v apk >/dev/null 2>&1; then
+            apk add --no-cache rsync jq git ca-certificates curl
+          elif command -v dnf >/dev/null 2>&1; then
+            dnf install -y rsync jq git ca-certificates curl
+          elif command -v yum >/dev/null 2>&1; then
+            yum install -y rsync jq git ca-certificates curl
+          else
+            echo "Unsupported base image"; exit 1
+          fi
+
+      - name: Create PR (if needed), merge with merge-commit, delete branch
+        run: |
+          set -euo pipefail
+
+          : "${GITEA_TOKEN:?Missing secrets.GITEA_TOKEN}"
+          : "${REPO:?Missing repo context}"
+          : "${BRANCH:?Missing branch context}"
+
+          OWNER="${REPO%%/*}"
+          NAME="${REPO##*/}"
+
+          API="${GITEA_BASE_URL%/}/api/v1"
+          AUTH="Authorization: token ${GITEA_TOKEN}"
+
+          FEATURE_BRANCH="${BRANCH}"
+          BASE_BRANCH="${PLAYTEST_BRANCH}"
+
+          echo "[INFO] Repo: ${OWNER}/${NAME}"
+          echo "[INFO] Feature branch: ${FEATURE_BRANCH}"
+          echo "[INFO] Base branch: ${BASE_BRANCH}"
+
+          # 1) Create PR from feature branch to playtest
+          echo "[INFO] Creating PR from ${FEATURE_BRANCH} → ${BASE_BRANCH}"
+          
+          PR_PAYLOAD="$(jq -n \
+            --arg title "Auto-merge ${FEATURE_BRANCH} -> ${BASE_BRANCH}" \
+            --arg head "${FEATURE_BRANCH}" \
+            --arg base "${BASE_BRANCH}" \
+            --arg body "Automated PR created on push to ${FEATURE_BRANCH}" \
+            '{title:$title, head:$head, base:$base, body:$body}')"
+
+          CREATE_URL="${API}/repos/${OWNER}/${NAME}/pulls"
+          CREATE_HTTP="$(curl -sS -o /tmp/pr_create.json -w "%{http_code}" \
+            -H "Content-Type: application/json" -H "$AUTH" \
+            -X POST -d "$PR_PAYLOAD" \
+            "$CREATE_URL" || true)"
+
+          if [ "$CREATE_HTTP" != "201" ]; then
+            echo "[ERROR] PR create failed (HTTP $CREATE_HTTP):"
+            cat /tmp/pr_create.json || true
+            exit 1
+          fi
+
+          PR_NUMBER="$(jq -r '.number' /tmp/pr_create.json)"
+          echo "[INFO] Created PR #${PR_NUMBER}"
+
+          # 2) Merge PR using a merge commit ("Do": "merge")
+          # Branch deletion is handled separately in step 4 with safety checks
+          MERGE_PAYLOAD="$(jq -n \
+            --arg do "merge" \
+            --arg title "Merge ${FEATURE_BRANCH} into ${BASE_BRANCH}" \
+            --arg message "Merged automatically from ${FEATURE_BRANCH}" \
+            '{Do:$do, MergeTitleField:$title, MergeMessageField:$message}')"
+
+          MERGE_URL="${API}/repos/${OWNER}/${NAME}/pulls/${PR_NUMBER}/merge"
+          MERGE_HTTP="$(curl -sS -o /tmp/pr_merge.json -w "%{http_code}" \
+            -H "Content-Type: application/json" -H "$AUTH" \
+            -X POST -d "$MERGE_PAYLOAD" \
+            "$MERGE_URL" || true)"
+
+          if [ "$MERGE_HTTP" != "200" ] && [ "$MERGE_HTTP" != "201" ] && [ "$MERGE_HTTP" != "204" ]; then
+            echo "[ERROR] PR merge failed (HTTP $MERGE_HTTP):"
+            cat /tmp/pr_merge.json || true
+            exit 1
+          fi
+          echo "[INFO] PR #${PR_NUMBER} merged."
+
+          # 4) Ensure branch is deleted (in case delete-after-merge is disabled)
+          # Safety check: only delete if branch name starts with "feature-" or "bugfix-"
+          if [[ "${FEATURE_BRANCH}" == feature-* ]] || [[ "${FEATURE_BRANCH}" == bugfix-* ]]; then
+            echo "[INFO] Deleting temporary branch: ${FEATURE_BRANCH}"
+            DEL_URL="${API}/repos/${OWNER}/${NAME}/branches/${FEATURE_BRANCH}"
+            DEL_HTTP="$(curl -sS -o /tmp/branch_del.json -w "%{http_code}" \
+              -H "$AUTH" -X DELETE \
+              "$DEL_URL" || true)"
+
+            if [ "$DEL_HTTP" = "204" ] || [ "$DEL_HTTP" = "200" ]; then
+              echo "[INFO] Branch ${FEATURE_BRANCH} deleted."
+            else
+              echo "[WARN] Branch delete returned HTTP $DEL_HTTP (may already be deleted or not permitted)."
+              cat /tmp/branch_del.json || true
+            fi
+          else
+            echo "[WARN] Branch ${FEATURE_BRANCH} does not match feature-* pattern. Skipping deletion for safety."
+          fi
