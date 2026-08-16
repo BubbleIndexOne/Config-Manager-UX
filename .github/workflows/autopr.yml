@@ -1,0 +1,42 @@
+name: Auto PR and Merge
+
+on:
+  push:
+    branches:
+      - 'feature-*'
+
+jobs:
+  auto-pr-and-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and Auto-Merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${GITHUB_REF_NAME}"
+          
+          # Check if a PR already exists for this branch
+          PR_EXISTS=$(gh pr list --head "$BRANCH_NAME" --base main --json number --jq 'length')
+          
+          if [ "$PR_EXISTS" -eq "0" ]; then
+            echo "Creating a new PR for branch $BRANCH_NAME..."
+            gh pr create \
+              --title "Automated merge: $BRANCH_NAME" \
+              --body "This PR was automatically created and merged by GitHub Actions." \
+              --base main \
+              --head "$BRANCH_NAME"
+          else
+            echo "PR already exists for $BRANCH_NAME."
+          fi
+          
+          echo "Approving and Merging PR..."
+          # Use --merge to do a merge commit. The --delete-branch flag removes the feature branch after a successful merge.
+          gh pr merge "$BRANCH_NAME" --merge --admin --delete-branch || gh pr merge "$BRANCH_NAME" --merge --delete-branch
