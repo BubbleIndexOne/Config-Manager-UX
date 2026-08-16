@@ -1,0 +1,6 @@
+name = "config-manager-ux"
+compatibility_date = "2024-03-20"
+pages_build_output_dir = "dist"
+
+[env.production]
+name = "config-manager-ux-production"

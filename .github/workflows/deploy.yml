@@ -1,0 +1,13 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    uses: BubbleIndexOne/Build-Pipeline/.github/workflows/deploy.yml@main
+    with:
+      environment: production
+    secrets:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
